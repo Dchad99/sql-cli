@@ -3,7 +3,6 @@ package com.ukraine.dc.api.service.processor;
 import com.ukraine.dc.api.db.ConnectionFactory;
 import com.ukraine.dc.api.db.DataSource;
 import com.ukraine.dc.api.model.Query;
-import com.ukraine.dc.api.model.QueryResult;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
