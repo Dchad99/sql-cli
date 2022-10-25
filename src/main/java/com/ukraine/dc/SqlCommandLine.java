@@ -10,7 +10,6 @@ import com.ukraine.dc.api.service.reports.ConsoleReportGenerator;
 import com.ukraine.dc.api.service.reports.HtmlReportGenerator;
 import com.ukraine.dc.api.service.reports.ReportGenerator;
 import com.ukraine.dc.api.service.writer.ReportsWriter;
-import com.ukraine.dc.httpserver.api.Server;
 
 import java.util.Scanner;
 
@@ -29,10 +28,6 @@ public class SqlCommandLine {
             var reportPath = writer.saveReport(content);
             System.out.println("Report is available by path: " + reportPath);
         });
-
-        Server server = new Server();
-        server.setWebResourcesPath("reports");
-        server.start();
 
         QueryHandler queryHandler = new SqlQueryHandler(parser, executor, new ReportGenerator[]{consoleReport, htmlReport});
         System.out.println("Enter a query: ");
