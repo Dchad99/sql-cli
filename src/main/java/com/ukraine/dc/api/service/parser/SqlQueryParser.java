@@ -10,9 +10,9 @@ public class SqlQueryParser implements QueryParser {
         validateQuery(queryString);
         String queryType = queryString.split("\\s")[0];
         if (queryType.equalsIgnoreCase(SqlCommand.SELECT.getSqlCommand())) {
-            return new Query(queryString, SqlCommand.SELECT.getSqlCommand());
+            return new Query(queryString, SqlCommand.SELECT);
         }
-        return new Query(queryString, SqlCommand.getQueryCommand(queryType).getSqlCommand());
+        return new Query(queryString, SqlCommand.getQueryCommand(queryType));
     }
 
     private void validateQuery(String query) {

@@ -1,13 +1,13 @@
 package com.ukraine.dc.api.service.reports;
 
-import com.ukraine.dc.api.model.QueryResult;
-import com.ukraine.dc.api.service.writer.ItemWriter;
+import com.ukraine.dc.api.model.QueryColumnResult;
 import lombok.SneakyThrows;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 public class HtmlReportGenerator implements ReportGenerator {
-    private static final String REPORT_FOLDER = "src/main/resources/reports";
     private static final String REPORT_HEADER = " <!doctype html>\n" +
             "                <html lang=\"en\">\n" +
             "                <head>\n" +
@@ -18,47 +18,46 @@ public class HtmlReportGenerator implements ReportGenerator {
     private static final String REPORT_FOOTER = " </table>\n" +
             "                    </body>\n" +
             "                </html>";
-    private final ItemWriter writer;
+    private static final String DATA_TEMPLATE = "<th>%s</th>";
+    private static final String ROW_START = "<tr>";
+    private static final String ROW_END = "</tr>";
+    private final Consumer<String> writer;
 
-    public HtmlReportGenerator(ItemWriter writer) {
+    public HtmlReportGenerator(Consumer<String> writer) {
         this.writer = writer;
     }
 
     @SneakyThrows
     @Override
-    public void generateReport(List<QueryResult> data) {
+    public void generateReport(QueryColumnResult data) {
         String content = REPORT_HEADER + proceedTableHeaders(data) + proceedColumnData(data) + REPORT_FOOTER;
-        writer.saveReport(REPORT_FOLDER, content);
+        writer.accept(content);
     }
 
-    private String proceedTableHeaders(List<QueryResult> rows) {
+    private String proceedTableHeaders(QueryColumnResult rows) {
         StringBuilder builder = new StringBuilder();
-        if(!rows.isEmpty()) {
-            builder.append("<tr>");
-            for (QueryResult row : rows) {
-                builder.append("<th>").append(row.getColumnName()).append("</th>");
+        if(!rows.getColumnNames().isEmpty()) {
+            builder.append(ROW_START);
+            for (String row : rows.getColumnNames()) {
+                builder.append(String.format(DATA_TEMPLATE, row));
             }
-            builder.append("</tr>");
+            builder.append(ROW_END);
         }
         return builder.toString();
     }
 
-    private String proceedColumnData(List<QueryResult> rows) {
+    private String proceedColumnData(QueryColumnResult result) {
         StringBuilder builder = new StringBuilder();
 
-        int size = !rows.isEmpty() ? rows.get(0).getRows().size() : 0;
-
-        int currentRowIndex = 0;
-        if(size != 0) {
-            while (currentRowIndex != size) {
-                builder.append("<tr>");
-                for (QueryResult row : rows) {
-                    builder.append("<td>");
-                    builder.append(row.getRows().get(currentRowIndex));
-                    builder.append("</td>");
+        if (Objects.nonNull(result.getData()) && !result.getData().isEmpty()) {
+            for (List<String> row : result.getData()) {
+                builder.append(ROW_START);
+                var rowBuilder = new StringBuilder();
+                for (String field : row) {
+                    rowBuilder.append(String.format(DATA_TEMPLATE, field));
                 }
-                builder.append("</tr>");
-                currentRowIndex++;
+                builder.append(rowBuilder);
+                builder.append(ROW_END);
             }
         }
         return builder.toString();

@@ -1,6 +1,6 @@
 package com.ukraine.dc.api.service.reports;
 
-import com.ukraine.dc.api.model.QueryResult;
+import com.ukraine.dc.api.model.QueryColumnResult;
 import de.vandermeer.asciitable.AsciiTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,20 +8,26 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ConsoleReportGeneratorTest {
-    private static final String TABLE =
-            "        ┌───────────────────────────────────────┬──────────────────────────────────────┐\n" +
-            "        │id                                     │name                                  │\n" +
-            "        ├───────────────────────────────────────┼──────────────────────────────────────┤\n" +
-            "        │1                                      │A                                     │\n" +
-            "        ├───────────────────────────────────────┼──────────────────────────────────────┤\n" +
-            "        │2                                      │B                                     │\n" +
-            "        └───────────────────────────────────────┴──────────────────────────────────────┘";
+    private static final String TABLE_WITH_DATA = """
+               ┌───────────────────────────────────────┬──────────────────────────────────────┐
+               │id                                     │name                                  │
+               ├───────────────────────────────────────┼──────────────────────────────────────┤
+               │1                                      │A                                     │
+               ├───────────────────────────────────────┼──────────────────────────────────────┤
+               │2                                      │B                                     │
+               └───────────────────────────────────────┴──────────────────────────────────────┘
+               """;
+
+    private static final String TABLE_WITHOUT_DATA = """
+               ┌───────────────────────────────────────┬──────────────────────────────────────┐
+               │id                                     │name                                  │
+               └───────────────────────────────────────┴──────────────────────────────────────┘
+            """;
+
     private final AsciiTable generator = mock(AsciiTable.class);
     private ReportGenerator reportGenerator;
 
@@ -31,25 +37,32 @@ class ConsoleReportGeneratorTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenGenerateReport() {
-        Exception exception = assertThrows(RuntimeException.class,
-                () -> reportGenerator.generateReport(anyList()));
-        assertEquals("No data to display", exception.getMessage());
+    void shouldDisplayOnlyColumnNames_whenTableIsEmpty() {
+        when(generator.render()).thenReturn(TABLE_WITHOUT_DATA);
+        reportGenerator.generateReport(buildQueryWithoutData());
+
+        assertEquals(TABLE_WITHOUT_DATA, generator.render());
     }
 
     @Test
-    void shouldRenderTableWithTwoColumns() {
-        when(generator.render()).thenReturn(TABLE);
-        reportGenerator.generateReport(buildQueryList());
+    void shouldRenderTableWithTwoColumnsAndTwoRecords() {
+        when(generator.render()).thenReturn(TABLE_WITH_DATA);
+        reportGenerator.generateReport(buildQueryWithData());
 
-        assertEquals(TABLE, generator.render());
+        assertEquals(TABLE_WITH_DATA, generator.render());
     }
 
-    private List<QueryResult> buildQueryList() {
-        return List.of(
-                new QueryResult("id", List.of("1", "2")),
-                new QueryResult("name", List.of("A", "B"))
-        );
+    private QueryColumnResult buildQueryWithData() {
+        return QueryColumnResult.builder()
+                .columnNames(List.of("id", "name"))
+                .data(List.of(List.of("1", "A"), List.of("2", "B")))
+                .build();
+    }
+
+    private QueryColumnResult buildQueryWithoutData() {
+        return QueryColumnResult.builder()
+                .columnNames(List.of("id", "name"))
+                .build();
     }
 
 }

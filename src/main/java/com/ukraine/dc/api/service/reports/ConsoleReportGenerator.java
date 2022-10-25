@@ -1,10 +1,11 @@
 package com.ukraine.dc.api.service.reports;
 
-import com.ukraine.dc.api.model.QueryResult;
+import com.ukraine.dc.api.model.QueryColumnResult;
 import de.vandermeer.asciitable.AsciiTable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ConsoleReportGenerator implements ReportGenerator {
     private final AsciiTable tableGenerator;
@@ -14,42 +15,26 @@ public class ConsoleReportGenerator implements ReportGenerator {
     }
 
     @Override
-    public void generateReport(List<QueryResult> data) {
-        displayColumnHeaders(data);
+    public void generateReport(QueryColumnResult data) {
+        displayColumnHeaders(data.getColumnNames());
         proceedTableData(data);
-        if (data.isEmpty()) {
-            throw new RuntimeException("No data to display");
-        }
         System.out.println(tableGenerator.render());
     }
 
-    private void displayColumnHeaders(List<QueryResult> queryResults) {
+    private void displayColumnHeaders(List<String> queryColumnResults) {
         tableGenerator.addRule();
         var columnNames = new ArrayList<>();
-        for (QueryResult queryResult : queryResults) {
-            columnNames.add(queryResult.getColumnName());
-        }
+        columnNames.addAll(queryColumnResults);
         tableGenerator.addRow(columnNames);
     }
 
-    private void proceedTableData(List<QueryResult> queryResults) {
+    private void proceedTableData(QueryColumnResult result) {
         tableGenerator.addRule();
-
-        int size = 0;
-        int current = 0;
-        for (QueryResult queryResult : queryResults) {
-            size = queryResult.getRows().size();
-        }
-
-        if (size != 0) {
-            while (current != size) {
-                var res = new ArrayList<>();
-                for (QueryResult queryResult : queryResults) {
-                    res.add(queryResult.getRows().get(current));
-                }
-                tableGenerator.addRow(res);
+        if (Objects.nonNull(result.getData()) && !result.getData()
+                .isEmpty()) {
+            for (List<String> row : result.getData()) {
+                tableGenerator.addRow(row);
                 tableGenerator.addRule();
-                current++;
             }
         }
     }

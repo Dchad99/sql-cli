@@ -16,16 +16,16 @@ class SqlQueryParserTest {
 
     @Test
     void shouldReturnSelectQueryInstance_whenQueryIsValid() {
-        var expectedQuery = new Query(SELECT_QUERY, SqlCommand.SELECT.getSqlCommand());
+        var expectedQuery = new Query(SELECT_QUERY, SqlCommand.SELECT);
         var actual = parser.parseQuery(SELECT_QUERY);
-        assertEquals(expectedQuery.getQueryType(), actual.getQueryType());
+        assertEquals(expectedQuery.getCommand(), actual.getCommand());
     }
 
     @Test
     void shouldReturnSqlQueryInstance_whenSqlQueryIsValid() {
-        var expectedQuery = new Query(SQL_QUERY, SqlCommand.DROP.getSqlCommand());
+        var expectedQuery = new Query(SQL_QUERY, SqlCommand.DROP);
         var actual = parser.parseQuery(SQL_QUERY);
-        assertEquals(expectedQuery.getQueryType(), actual.getQueryType());
+        assertEquals(expectedQuery.getCommand(), actual.getCommand());
     }
 
     @Test

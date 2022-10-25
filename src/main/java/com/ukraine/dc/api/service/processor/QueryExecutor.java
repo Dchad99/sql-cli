@@ -1,12 +1,10 @@
 package com.ukraine.dc.api.service.processor;
 
 import com.ukraine.dc.api.model.Query;
-import com.ukraine.dc.api.model.QueryResult;
-
-import java.util.List;
+import com.ukraine.dc.api.model.QueryColumnResult;
 
 public interface QueryExecutor {
-    List<QueryResult> executeQuery(Query query);
+    QueryColumnResult execute(Query query);
 
-    int execute(Query query);
+    int executeUpdate(Query query);
 }
