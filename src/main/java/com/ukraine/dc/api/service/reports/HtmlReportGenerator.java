@@ -8,16 +8,18 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 public class HtmlReportGenerator implements ReportGenerator {
-    private static final String REPORT_HEADER = " <!doctype html>\n" +
-            "                <html lang=\"en\">\n" +
-            "                <head>\n" +
-            "                <title>Second</title>\n" +
-            "            </head>\n" +
-            "            <body>\n" +
-            "                <table>";
-    private static final String REPORT_FOOTER = " </table>\n" +
-            "                    </body>\n" +
-            "                </html>";
+    private static final String REPORT_HEADER = """
+            <!doctype html>
+            <html lang="en">
+            <head>
+            <title>Second</title>
+            </head>
+            <body>
+              <table>""";
+    private static final String REPORT_FOOTER = """
+            </table>
+            </body>
+            </html>""";
     private static final String DATA_TEMPLATE = "<th>%s</th>";
     private static final String ROW_START = "<tr>";
     private static final String ROW_END = "</tr>";
@@ -36,7 +38,7 @@ public class HtmlReportGenerator implements ReportGenerator {
 
     private String proceedTableHeaders(QueryColumnResult rows) {
         StringBuilder builder = new StringBuilder();
-        if(!rows.getColumnNames().isEmpty()) {
+        if (!rows.getColumnNames().isEmpty()) {
             builder.append(ROW_START);
             for (String row : rows.getColumnNames()) {
                 builder.append(String.format(DATA_TEMPLATE, row));

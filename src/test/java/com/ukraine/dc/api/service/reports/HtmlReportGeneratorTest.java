@@ -15,24 +15,26 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class HtmlReportGeneratorTest {
-    private static final String HTML_REPORT_CONTENT = " <!doctype html>\n" +
-            "                <html lang=\"en\">\n" +
-            "                <head>\n" +
-            "                <title>Second</title>\n" +
-            "            </head>\n" +
-            "            <body>\n" +
-            "                <table><tr><th>id</th><th>name</th></tr><tr><th>1</th><th>A</th></tr><tr><th>2</th><th>B</th></tr> </table>\n" +
-            "                    </body>\n" +
-            "                </html>";
-    private static final String EMPTY_TABLE_REPORT = " <!doctype html>\n" +
-            "                <html lang=\"en\">\n" +
-            "                <head>\n" +
-            "                <title>Second</title>\n" +
-            "            </head>\n" +
-            "            <body>\n" +
-            "                <table><tr><th>id</th><th>name</th></tr> </table>\n" +
-            "                    </body>\n" +
-            "                </html>";
+    private static final String HTML_REPORT_CONTENT = """
+            <!doctype html>
+            <html lang="en">
+            <head>
+            <title>Second</title>
+            </head>
+            <body>
+              <table><tr><th>id</th><th>name</th></tr><tr><th>1</th><th>A</th></tr><tr><th>2</th><th>B</th></tr></table>
+            </body>
+            </html>""";
+    private static final String EMPTY_TABLE_REPORT = """
+            <!doctype html>
+            <html lang="en">
+            <head>
+            <title>Second</title>
+            </head>
+            <body>
+              <table><tr><th>id</th><th>name</th></tr></table>
+            </body>
+            </html>""";
     private final ItemWriter writer = mock(ReportsWriter.class);
     private ReportGenerator reportGenerator;
 
